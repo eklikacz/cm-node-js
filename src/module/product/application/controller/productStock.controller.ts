@@ -17,12 +17,12 @@ export class ProductStockController {
   }
 
   public async postProductRestock (req: Request, response: Response): Promise<void> {
-    await this.productService.getProduct(req.params.id);
-    await this.productService.incrementProductStock(req.params.id, req.body.count);
+    await this.productService.getProduct(req.params.id, response.locals.session);
+    await this.productService.incrementProductStock(req.params.id, req.body.count, response.locals.session);
   }
 
-  public async postProductSell (req: Request): Promise<void> {
-    await this.productService.getProduct(req.params.id);
-    await this.productService.decrementProductStock(req.params.id, req.body.count);
+  public async postProductSell (req: Request, response: Response): Promise<void> {
+    await this.productService.getProduct(req.params.id, response.locals.session);
+    await this.productService.decrementProductStock(req.params.id, req.body.count, response.locals.session);
   }
 }

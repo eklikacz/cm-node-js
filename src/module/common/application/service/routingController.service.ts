@@ -5,13 +5,12 @@ import { HttpMethod } from '@common/domain/enum';
 
 export class RoutingControllerService {
   private readonly router: Router;
-  private readonly logger: Logger;
 
   public constructor (
+    private readonly logger: Logger,
     private readonly path: string = '/',
   ) {
     this.router = Router();
-    this.logger = Logger.instance();
   }
 
   public register (
@@ -68,8 +67,8 @@ export class RoutingControllerService {
     };
   }
 
-  public static createRouting (path: string = '/', cb: (routing: RoutingControllerService) => RoutingControllerService): [string, Router] {
-    const routingController = new RoutingControllerService(path);
+  public static createRouting (logger: Logger, path: string = '/', cb: (routing: RoutingControllerService) => RoutingControllerService): [string, Router] {
+    const routingController = new RoutingControllerService(logger, path);
 
     return [path, cb(routingController).router];
   }

@@ -19,7 +19,7 @@ export interface LoggerParams {
 
 export class Logger {
   private static _instance: Logger = new Logger({});
-  private isDebug = EnvService.instance().getEnv('IS_DEBUG', false);
+  private isDebug = EnvService.instance().getEnv('IS_DEBUG', 'false') === 'true';
 
   public constructor (private readonly config: any = {}) {
     this.config.isDebug = EnvService.getEnv('IS_DEBUG', false);

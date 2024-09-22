@@ -13,15 +13,16 @@ export * as application from './application';
 export * as domain from './domain';
 export * as infrastructure from './infrastructure';
 
-export const init = async (app: Express) => {
+export const init = async (app: Express, logger: Logger) => {
   const dependency = DependencyService.instance();
   const orderController = dependency.resolve(OrdersController);
   const validatorMiddleware = createValidatorMiddleware();
-  const mongoDbTransaction = await createMongoDbTransactionMiddleware(Logger.instance());
+  const mongoDbTransaction = await createMongoDbTransactionMiddleware(logger);
 
   dependency.resolve(CqrsService).registerCommandHandler(CreateOrderCommand, dependency.resolve(CreateOrderHandler));
 
   app.use(...RoutingControllerService.createRouting(
+    logger,
     '/orders',
     routing => routing
       .register('', HttpMethod.POST, orderController.postOrder.bind(orderController), StatusCodes.CREATED, [validatorMiddleware, mongoDbTransaction]),

@@ -1,13 +1,14 @@
-import { ICommandHandler } from '@common/application/service/cqrs';
+import { AbstractCommandHandler, ICommandHandler } from '@common/application/service/cqrs';
 import { ProductRepository } from '@product/infrastructure/repository';
 import { CreateProductCommand } from '@product/domain/cqrs/command';
 import { Injectable } from '@common/application/decorator';
 
 @Injectable()
-export class CreateProductHandler implements ICommandHandler<CreateProductCommand> {
+export class CreateProductHandler extends AbstractCommandHandler implements ICommandHandler<CreateProductCommand> {
   public constructor (
     private readonly repository: ProductRepository,
   ) {
+    super();
   }
 
   public async execute (body: CreateProductCommand): Promise<void> {
@@ -16,6 +17,6 @@ export class CreateProductHandler implements ICommandHandler<CreateProductComman
       createdAt: new Date(),
     });
 
-    await this.repository.create(product);
+    await this.repository.create(product, { session: this.session });
   }
 }

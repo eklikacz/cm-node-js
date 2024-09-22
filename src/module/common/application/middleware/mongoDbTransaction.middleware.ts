@@ -1,6 +1,5 @@
 import { Logger } from '@common/application/service';
 import { NextFunction, Request, Response } from 'express';
-import { SessionStatic } from '@common/infrastructure/mongoDb/session.static';
 import { MongoClient } from '@common/module';
 
 export async function createMongoDbTransactionMiddleware (logger: Logger) {
@@ -14,8 +13,6 @@ export async function createMongoDbTransactionMiddleware (logger: Logger) {
     res.locals.session = session;
     res.locals.session.startTransaction();
 
-    SessionStatic.setSession(res.locals.session);
-
     res.on('finish', async () => {
       if (res.statusCode >= 400) {
         await session.abortTransaction();
@@ -25,7 +22,6 @@ export async function createMongoDbTransactionMiddleware (logger: Logger) {
       }
 
       !session.hasEnded && await session.endSession();
-      SessionStatic.clean();
     });
 
     next();

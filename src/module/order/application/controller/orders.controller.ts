@@ -19,8 +19,8 @@ export class OrdersController {
   }
 
   // change this process to events design
-  public async postOrder (req: Request): Promise<ICreateEntity> {
-    const orderId = await this.orderService.createOrder(req.body);
+  public async postOrder (req: Request, response: Response): Promise<ICreateEntity> {
+    const orderId = await this.orderService.createOrder(req.body, response.locals.session);
 
     return {
       data: this.orderIdFormat.format(orderId),

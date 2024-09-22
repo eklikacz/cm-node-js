@@ -2,7 +2,6 @@ import mongoose, { Document, Schema } from 'mongoose';
 import { CountOptions } from 'mongodb';
 import { InfrastructureError } from '@common/domain/error';
 import ObjectId = mongoose.Schema.Types.ObjectId;
-import { SessionStatic } from '@common/infrastructure/mongoDb/session.static';
 
 
 export abstract class AbstractRepository<IEntity extends Document> {
@@ -19,26 +18,22 @@ export abstract class AbstractRepository<IEntity extends Document> {
     return this.collection;
   }
 
-  public getSession (): mongoose.ClientSession {
-    return SessionStatic.getSession();
-  }
-
   public findAll (
     filter: mongoose.RootFilterQuery<IEntity>,
     options?: mongoose.QueryOptions<IEntity>,
   ): Promise<IEntity[]> {
-    return this.collection.find(filter, undefined, { ...options, session: this.getSession() }).exec();
+    return this.collection.find(filter, undefined, { ...options }).exec();
   }
 
   public count (
     filter: mongoose.RootFilterQuery<IEntity>,
     options?: (CountOptions & mongoose.MongooseBaseQueryOptions<IEntity>) | null,
   ): Promise<number> {
-    return this.collection.countDocuments(filter, { ...options, session: this.getSession() }).exec();
+    return this.collection.countDocuments(filter, { ...options }).exec();
   }
 
   public findOneById (id: string, options?: mongoose.QueryOptions<IEntity>) {
-    return this.collection.findById(new ObjectId(id), undefined, { ...options, session: this.getSession() })
+    return this.collection.findById(new ObjectId(id), undefined, { ...options })
       .exec()
       .then(found => {
         if (!found) {
@@ -55,7 +50,7 @@ export abstract class AbstractRepository<IEntity extends Document> {
     options?: mongoose.QueryOptions<IEntity>,
   ) {
     // @ts-ignore Typing problem related to abstract class
-    return this.collection.findOne({ [field]: value }, undefined, { ...options, session: this.getSession() })
+    return this.collection.findOne({ [field]: value }, undefined, { ...options })
       .exec()
       .then(found => {
         if (!found) {
@@ -67,20 +62,18 @@ export abstract class AbstractRepository<IEntity extends Document> {
   }
 
   public create (entity: IEntity, options?: mongoose.CreateOptions) {
-    return entity.save({ ...options, validateBeforeSave: true, session: this.getSession() });
+    return entity.save({ ...options, validateBeforeSave: true });
   }
 
   public update (id: string, entity: Partial<IEntity>) {
     return this.collection.updateOne({ _id: new ObjectId(id) }, entity, {
       validateBeforeSave: true,
-      session: this.getSession(),
     }).exec();
   }
 
   public delete (id: string) {
     return this.collection.deleteOne({ _id: new ObjectId(id) }, {
       validateBeforeSave: true,
-      session: this.getSession(),
     }).exec();
   }
 }

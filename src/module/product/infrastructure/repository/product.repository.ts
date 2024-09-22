@@ -1,6 +1,6 @@
 import { AbstractRepository } from '@common/infrastructure/mongoDb';
 import { IProductSchema, ProductSchema } from '@product/domain/schema';
-import { SortOrder } from 'mongoose';
+import mongoose, { SortOrder } from 'mongoose';
 import { MongoDbError } from '@common/domain/error';
 import { Injectable } from '@common/application/decorator';
 
@@ -25,7 +25,7 @@ export class ProductRepository extends AbstractRepository<IProductSchema> {
     super('Product', ProductSchema);
   }
 
-  public async findProducts (dto: IFindProducts): Promise<IProductSchema[]> {
+  public async findProducts (dto: IFindProducts, options?: mongoose.QueryOptions<IProductSchema>): Promise<IProductSchema[]> {
     const filter = {
       ...(dto?.name ? { name: { $eq: dto.name } } : {}),
       ...(dto?.id ? { name: { $eq: dto.id } } : {}),
@@ -33,23 +33,23 @@ export class ProductRepository extends AbstractRepository<IProductSchema> {
     const skip = dto.itemsPerPage * (dto.page - 1);
 
     return this.collection
-      .find(filter, undefined, { session: this.getSession() })
+      .find(filter, undefined, { ...options })
       .limit(dto.itemsPerPage)
       .skip(skip >= 0 ? skip : 0)
       .sort([[dto.sortBy || 'createdAt', dto.sortDir as SortOrder || 'asc']])
       .exec();
   }
 
-  public async countProducts (dto: Partial<IFindProducts>): Promise<number> {
+  public async countProducts (dto: Partial<IFindProducts>, options?: mongoose.MongooseBaseQueryOptions<IProductSchema>): Promise<number> {
     const filter = {
       ...(dto?.name ? { name: { $eq: dto.name } } : {}),
       ...(dto?.id ? { name: { $eq: dto.id } } : {}),
     };
 
-    return this.collection.countDocuments(filter, { session: this.getSession() }).exec();
+    return this.collection.countDocuments(filter, { ...options }).exec();
   }
 
-  public async changeProductStock (dto: IChangeProductStock) {
+  public async changeProductStock (dto: IChangeProductStock, options?: mongoose.QueryOptions<IProductSchema>) {
     const update = {
       ...(typeof dto.incrementStock === 'number' ? { $inc: { stock: dto.incrementStock } } : {}),
       ...(typeof dto.decrementStock === 'number' ? { $inc: { stock: -dto.decrementStock } } : {}),
@@ -59,7 +59,7 @@ export class ProductRepository extends AbstractRepository<IProductSchema> {
       runValidators: true,
       new: true,
       returnDocument: 'after',
-      session: this.getSession(),
+      ...options,
     })
       .exec()
       .then(async document => {

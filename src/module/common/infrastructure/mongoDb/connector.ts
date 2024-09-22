@@ -5,14 +5,17 @@ export interface ConfigConnectionToMongoDB {
   connectionString: string,
 }
 
-export const connectToMongoose = (config: ConfigConnectionToMongoDB): Promise<Mongoose> => {
+export const connectToMongoose = (
+  config: ConfigConnectionToMongoDB,
+  logger: Logger,
+): Promise<Mongoose> => {
   return connect(
     config.connectionString,
     {
       ignoreUndefined: true,
     },
   ).then(mongoose => {
-    Logger.instance().debug('Connected to MongoDB', { host: mongoose.connection.host, port: mongoose.connection.port });
+    logger.debug('Connected to MongoDB', { host: mongoose.connection.host, port: mongoose.connection.port });
 
     return mongoose;
   });

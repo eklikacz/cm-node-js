@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { ProductService } from '@product/application/service';
 import { Injectable } from '@common/application/decorator';
 import { IProduct, ProductIdFormat, ProductsFormat } from '@product/application/controller/format';
@@ -20,7 +20,7 @@ export class ProductsController {
       .register(HttpMethod.POST, '/products', createProductInput());
   }
 
-  public async getProducts (req: Request): Promise<ICollection<IProduct>> {
+  public async getProducts (req: Request, response: Response): Promise<ICollection<IProduct>> {
     const page = Number(req.query.page ?? 1);
     const itemsPerPage = Number(req.query.itemsPerPage ?? 10);
     const sortBy = String(req.query.sortBy ?? 'createdAt');
@@ -31,7 +31,7 @@ export class ProductsController {
       itemsPerPage,
       sortBy,
       sortDir,
-    });
+    }, response.locals.session);
 
     return {
       data: this.productsFormat.formatProducts(products),
@@ -43,8 +43,8 @@ export class ProductsController {
     };
   }
 
-  public async postProduct (req: Request): Promise<ICreateEntity> {
-    const productId = await this.productService.createProduct(req.body);
+  public async postProduct (req: Request, response: Response): Promise<ICreateEntity> {
+    const productId = await this.productService.createProduct(req.body, response.locals.session);
 
     return {
       data: this.productIdFormat.format(productId),

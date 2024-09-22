@@ -29,11 +29,11 @@ import { createMongoDbTransactionMiddleware } from '@common/application/middlewa
 export * as application from './application';
 export * as domain from './domain';
 
-export const init = async (app: Express) => {
+export const init = async (app: Express, logger: Logger) => {
   const dependency = DependencyService.instance();
   const productsController = dependency.resolve(ProductsController);
   const productStockController = dependency.resolve(ProductStockController);
-  const mongoDbTransaction = await createMongoDbTransactionMiddleware(Logger.instance());
+  const mongoDbTransaction = await createMongoDbTransactionMiddleware(logger);
 
   dependency.resolve(CqrsService).registerCommandHandler(CreateProductCommand, dependency.resolve(CreateProductHandler))
     .registerCommandHandler(DecrementProductStockCommand, dependency.resolve(DecrementProductStockHandler))
@@ -47,6 +47,7 @@ export const init = async (app: Express) => {
   const validatorMiddleware = createValidatorMiddleware();
 
   app.use(...RoutingControllerService.createRouting(
+    logger,
     '/products',
     routing => routing
       .register('', HttpMethod.GET, productsController.getProducts.bind(productsController), StatusCodes.OK, [validatorMiddleware])
