@@ -1,0 +1,80 @@
+ProductListResponse:
+  type: object
+  properties:
+    data:
+      type: array
+      items:
+        $ref: './components.yaml#/Product'
+    page:
+      type: integer
+    itemsPerPage:
+      type: integer
+    totalCount:
+      type: integer
+    hasNextPage:
+      type: boolean
+    hasPreviousPage:
+      type: boolean
+ProductCreateResponse:
+  type: object
+  properties:
+    data:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+OrderCreateResponse:
+  type: object
+  properties:
+    data:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+BadRequest:
+  type: object
+  properties:
+    status:
+      type: string
+      example: bad-request
+    message:
+      type: string
+      example: Bad Request
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          message:
+            type: string
+          code:
+            type: string
+NotFound:
+  type: object
+  properties:
+    status:
+      type: string
+      example: not-found
+    message:
+      type: string
+      example: Resource not found
+Conflict:
+  type: object
+  properties:
+    status:
+      type: string
+      example: conflict
+    message:
+      type: string
+      example: Conflict
+InternalServerError:
+  type: object
+  properties:
+    status:
+      type: string
+      example: internal-server-error
+    message:
+      type: string
+      example: Internal Server Error

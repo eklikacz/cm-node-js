@@ -1,0 +1,75 @@
+Product:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    name:
+      type: string
+      maxLength: 50
+    description:
+      type: string
+      maxLength: 50
+    price:
+      type: string
+      pattern: '^[0-9]*\.[0-9]+$'
+    stock:
+      type: integer
+      minimum: 0
+    createdAt:
+      type: string
+      format: date-time
+  required:
+    - id
+    - name
+    - description
+    - price
+    - stock
+    - createdAt
+CreateProduct:
+  type: object
+  properties:
+    name:
+      type: string
+      maxLength: 50
+    description:
+      type: string
+      maxLength: 50
+    price:
+      type: string
+      pattern: '^[0-9]*\.[0-9]+$'
+    stock:
+      type: integer
+      minimum: 0
+  required:
+    - name
+    - description
+    - price
+    - stock
+CreateOrder:
+  type: object
+  properties:
+    customerId:
+      type: string
+      format: uuid
+    products:
+      type: array
+      items:
+        type: object
+        required:
+          - id
+          - count
+          - price
+        properties:
+          id:
+            type: string
+            format: uuid
+          count:
+            type: integer
+            minimum: 1
+          price:
+            type: string
+            pattern: '^[0-9]*\.[0-9]+$'
+  required:
+    - customerId
+    - products

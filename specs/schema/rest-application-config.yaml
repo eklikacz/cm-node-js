@@ -1,0 +1,34 @@
+title: 'Rest application config'
+type: 'object'
+require:
+  - 'application'
+  - 'mongoDb'
+properties:
+  isDebug:
+    title: 'Add debug logs'
+    type: 'boolean'
+    example: true
+  application:
+    type: 'object'
+    require:
+      - 'port'
+      - 'configPath'
+    properties:
+      port:
+        title: 'Application port'
+        type: 'number'
+        example: 3000
+      configPath:
+        title: 'Application config path'
+        type: 'string'
+  mongoDb:
+    title: 'Config for mongoDb'
+    type: 'object'
+    require:
+      - 'connectionString'
+    properties:
+      connectionString:
+        title: 'Connection string form mongoDb'
+        type: 'string'
+        example: ''
+
