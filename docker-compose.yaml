@@ -1,0 +1,27 @@
+version: '3.3'
+
+services:
+  cmmongodb:
+    image: mongo:latest
+    container_name: cmmongodb
+    env_file:
+      - .env
+    expose:
+      - 27017
+    ports:
+      - "${DB_PORT}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${DB_ROOT_USER}"
+      MONGO_INITDB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MONGO_INITDB_DATABASE: "${DB_NAME}"
+    volumes:
+      - ./resources/mongo/key-files/mongo-key:/etc/mongo/mongodb-keyfile-to-copy
+    command: mongod --replSet ${DB_REPLICA_SET_NAME} --auth --keyFile /etc/mongo/mongodb-keyfile
+    entrypoint:
+      - bash
+      - -c
+      - |
+        cp /etc/mongo/mongodb-keyfile-to-copy /etc/mongo/mongodb-keyfile
+        chmod 400 /etc/mongo/mongodb-keyfile
+        chown 999:999 /etc/mongo/mongodb-keyfile
+        exec docker-entrypoint.sh $$@

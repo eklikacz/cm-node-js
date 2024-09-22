@@ -1,0 +1,128 @@
+openapi: 3.0.0
+info:
+  title: Simple Inventory Management System API
+  description: API for managing an inventory of products with CRUD operations and stock management.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+paths:
+  /products:
+    get:
+      summary: Retrieve a list of all products
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 9007199254740991
+        - in: query
+          name: itemsPerPage
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+            enum: [ 'createdAt', 'name' ]
+        - in: query
+          name: sortDir
+          required: false
+          schema:
+            type: string
+            enum: [ 'asc', 'desc' ]
+        - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 50
+      responses:
+        '200':
+          $ref: './response.yaml#/ProductListResponse'
+        '400':
+          $ref: './response.yaml#/BadRequest'
+        '500':
+          $ref: './response.yaml#/InternalServerError'
+
+    post:
+      summary: Create a new product
+      requestBody:
+        $ref: './requestBody.yaml#/CreateProduct'
+      responses:
+        '201':
+          $ref: './response.yaml#/ProductCreateResponse'
+        '400':
+          $ref: './response.yaml#/BadRequest'
+        '409':
+          $ref: './response.yaml#/Conflict'
+        '500':
+          $ref: './response.yaml#/InternalServerError'
+
+  /products/{id}/restock:
+    post:
+      summary: Increase the stock level of a product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Stock updated
+        '400':
+          $ref: './response.yaml#/BadRequest'
+        '404':
+          $ref: './response.yaml#/NotFound'
+        '409':
+          $ref: './response.yaml#/Conflict'
+        '500':
+          $ref: './response.yaml#/InternalServerError'
+
+  /products/{id}/sell:
+    post:
+      summary: Decrease the stock level of a product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Stock updated
+        '400':
+          $ref: './response.yaml#/BadRequest'
+        '404':
+          $ref: './response.yaml#/NotFound'
+        '409':
+          $ref: './response.yaml#/Conflict'
+        '500':
+          $ref: './response.yaml#/InternalServerError'
+
+  /orders:
+    post:
+      summary: Create a new order
+      requestBody:
+        $ref: './requestBody.yaml#/CreateOrder'
+      responses:
+        '201':
+          $ref: './response.yaml#/OrderCreateResponse'
+        '400':
+          $ref: './response.yaml#/BadRequest'
+        '404':
+          $ref: './response.yaml#/NotFound'
+        '409':
+          $ref: './response.yaml#/Conflict'
+        '500':
+          $ref: './response.yaml#/InternalServerError'

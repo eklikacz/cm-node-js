@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "ES2020",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "lib": ["ES2020"],                                        /* Specify a set of bundled library declaration files that describe the target runtime environment. */
+    "moduleDetection": "auto",                        /* Control what method is used to detect module-format JS files. */
+    "module": "commonjs",                                /* Specify what module code is generated. */
+    "baseUrl": ".",
+    "outDir": "./dist",                         /* Specify the base directory to resolve non-relative module names. */
+    "paths": {
+      "@/*": ["src/*"],
+      "@common/*": ["src/module/common/*"],
+      "@order/*": ["src/module/order/*"],
+      "@product/*": ["src/module/product/*"]
+    },                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
+    "sourceMap": true,                                /* Create source map files for emitted JavaScript files. */
+    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
+    "strict": true,                                      /* Enable all strict type-checking options. */
+    "noImplicitAny": false,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
+  },
+}

@@ -1,1 +1,5 @@
-/.ideas
+/coverage
+/.idea
+/dist
+/node_modules
+.env

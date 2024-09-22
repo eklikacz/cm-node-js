@@ -1,0 +1,4 @@
+CreateProduct:
+  $ref: './components.yaml#/CreateProduct'
+CreateOrder:
+  $ref: './components.yaml#/CreateOrder'
